@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF to MP3 Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            color: #333;
+            text-align: center;
+        }
+        header {
+            background: #007bff;
+            color: #fff;
+            padding: 20px;
+        }
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .upload-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px dashed #007bff;
+            border-radius: 5px;
+            width: 100%;
+            text-align: center;
+        }
+        button {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result-section {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        audio {
+            width: 100%;
+            margin-top: 10px;
+        }
+        footer {
+            background: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>PDF to MP3 Converter</h1>
+        <p>Upload your PDF file and convert it to an MP3 audio file!</p>
+    </header>
+
+    <main>
+        <!-- File Upload Section -->
+        <section class="upload-section">
+            <h2>Upload Your PDF</h2>
+            <input type="file" id="pdfUpload" accept=".pdf">
+            <button id="convertBtn">Convert to MP3</button>
+        </section>
+
+        <!-- Result Section -->
+        <section class="result-section">
+            <h2>Your MP3 File</h2>
+            <audio id="mp3Player" controls>
+                Your browser does not support the audio element.
+            </audio>
+            <a id="downloadLink" style="display: none;">Download MP3</a>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 PDF to MP3 Converter. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.getElementById('convertBtn').addEventListener('click', function () {
+            const fileInput = document.getElementById('pdfUpload');
+            const mp3Player = document.getElementById('mp3Player');
+            const downloadLink = document.getElementById('downloadLink');
+
+            if (fileInput.files.length === 0) {
+                alert('Please upload a PDF file first.');
+                return;
+            }
+
+            // Simulate conversion process (replace with actual backend API call)
+            alert('Conversion started. Please wait...');
+            setTimeout(() => {
+                // Simulate a dummy MP3 file for demonstration
+                const dummyMp3Url = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+                mp3Player.src = dummyMp3Url;
+                mp3Player.style.display = 'block';
+
+                downloadLink.href = dummyMp3Url;
+                downloadLink.download = 'converted-file.mp3';
+                downloadLink.style.display = 'block';
+
+                alert('Conversion complete!');
+            }, 3000); // Simulate a 3-second delay
+        });
+    </script>
+</body>
+</html>
