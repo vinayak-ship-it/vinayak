@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF to MP3 Converter</title>
+    <title>PDF Reader</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -46,6 +46,7 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            margin: 5px;
         }
         button:hover {
             background: #0056b3;
@@ -55,10 +56,7 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        audio {
-            width: 100%;
-            margin-top: 10px;
+            text-align: left;
         }
         footer {
             background: #333;
@@ -73,8 +71,8 @@
 </head>
 <body>
     <header>
-        <h1>PDF to MP3 Converter</h1>
-        <p>Upload your PDF file and convert it to an MP3 audio file!</p>
+        <h1>PDF Reader</h1>
+        <p>Upload a PDF file and listen to it being read aloud!</p>
     </header>
 
     <main>
@@ -82,49 +80,96 @@
         <section class="upload-section">
             <h2>Upload Your PDF</h2>
             <input type="file" id="pdfUpload" accept=".pdf">
-            <button id="convertBtn">Convert to MP3</button>
+            <button id="readBtn">Read Aloud</button>
+            <button id="pauseBtn" disabled>Pause</button>
+            <button id="resumeBtn" disabled>Resume</button>
+            <button id="stopBtn" disabled>Stop</button>
         </section>
 
         <!-- Result Section -->
         <section class="result-section">
-            <h2>Your MP3 File</h2>
-            <audio id="mp3Player" controls>
-                Your browser does not support the audio element.
-            </audio>
-            <a id="downloadLink" style="display: none;">Download MP3</a>
+            <h2>Extracted Text</h2>
+            <div id="extractedText"></div>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2023 PDF to MP3 Converter. All rights reserved.</p>
+        <p>&copy; 2023 PDF Reader. All rights reserved.</p>
     </footer>
 
     <script>
-        document.getElementById('convertBtn').addEventListener('click', function () {
-            const fileInput = document.getElementById('pdfUpload');
-            const mp3Player = document.getElementById('mp3Player');
-            const downloadLink = document.getElementById('downloadLink');
+        // Web Speech API
+        const speech = new SpeechSynthesisUtterance();
+        let isPaused = false;
 
-            if (fileInput.files.length === 0) {
-                alert('Please upload a PDF file first.');
-                return;
+        // Upload PDF and extract text
+        document.getElementById('pdfUpload').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const pdfData = new Uint8Array(e.target.result);
+                    extractTextFromPDF(pdfData);
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        });
+
+        // Extract text from PDF using PDF.js
+        async function extractTextFromPDF(pdfData) {
+            const pdfjsLib = await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js');
+            const loadingTask = pdfjsLib.default.getDocument({ data: pdfData });
+            const pdf = await loadingTask.promise;
+            let text = '';
+
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+                text += content.items.map(item => item.str).join(' ');
             }
 
-            // Simulate conversion process (replace with actual backend API call)
-            alert('Conversion started. Please wait...');
-            setTimeout(() => {
-                // Simulate a dummy MP3 file for demonstration
-                const dummyMp3Url = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
-                mp3Player.src = dummyMp3Url;
-                mp3Player.style.display = 'block';
+            document.getElementById('extractedText').textContent = text;
+            speech.text = text; // Set text for speech
+            enableButtons();
+        }
 
-                downloadLink.href = dummyMp3Url;
-                downloadLink.download = 'converted-file.mp3';
-                downloadLink.style.display = 'block';
-
-                alert('Conversion complete!');
-            }, 3000); // Simulate a 3-second delay
+        // Read aloud
+        document.getElementById('readBtn').addEventListener('click', function () {
+            window.speechSynthesis.speak(speech);
+            disableButtonsExcept('pause', 'stop');
         });
+
+        // Pause speech
+        document.getElementById('pauseBtn').addEventListener('click', function () {
+            window.speechSynthesis.pause();
+            isPaused = true;
+            disableButtonsExcept('resume', 'stop');
+        });
+
+        // Resume speech
+        document.getElementById('resumeBtn').addEventListener('click', function () {
+            window.speechSynthesis.resume();
+            isPaused = false;
+            disableButtonsExcept('pause', 'stop');
+        });
+
+        // Stop speech
+        document.getElementById('stopBtn').addEventListener('click', function () {
+            window.speechSynthesis.cancel();
+            disableButtonsExcept('read');
+        });
+
+        // Enable/disable buttons
+        function enableButtons() {
+            document.getElementById('readBtn').disabled = false;
+        }
+
+        function disableButtonsExcept(...buttons) {
+            const buttonIds = ['read', 'pause', 'resume', 'stop'];
+            buttonIds.forEach(id => {
+                document.getElementById(`${id}Btn`).disabled = !buttons.includes(id);
+            });
+        }
     </script>
 </body>
 </html>
