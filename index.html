@@ -5,68 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDF Reader</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-            color: #333;
-            text-align: center;
-        }
-        header {
-            background: #007bff;
-            color: #fff;
-            padding: 20px;
-        }
-        main {
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        .upload-section {
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-        input[type="file"] {
-            margin: 10px 0;
-            padding: 10px;
-            border: 2px dashed #007bff;
-            border-radius: 5px;
-            width: 100%;
-            text-align: center;
-        }
-        button {
-            background: #007bff;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 5px;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-        .result-section {
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: left;
-        }
-        footer {
-            background: #333;
-            color: #fff;
-            text-align: center;
-            padding: 10px;
-            position: fixed;
-            width: 100%;
-            bottom: 0;
-        }
+        /* Paste the updated CSS here */
     </style>
 </head>
 <body>
@@ -98,78 +37,7 @@
     </footer>
 
     <script>
-        // Web Speech API
-        const speech = new SpeechSynthesisUtterance();
-        let isPaused = false;
-
-        // Upload PDF and extract text
-        document.getElementById('pdfUpload').addEventListener('change', function (event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const pdfData = new Uint8Array(e.target.result);
-                    extractTextFromPDF(pdfData);
-                };
-                reader.readAsArrayBuffer(file);
-            }
-        });
-
-        // Extract text from PDF using PDF.js
-        async function extractTextFromPDF(pdfData) {
-            const pdfjsLib = await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js');
-            const loadingTask = pdfjsLib.default.getDocument({ data: pdfData });
-            const pdf = await loadingTask.promise;
-            let text = '';
-
-            for (let i = 1; i <= pdf.numPages; i++) {
-                const page = await pdf.getPage(i);
-                const content = await page.getTextContent();
-                text += content.items.map(item => item.str).join(' ');
-            }
-
-            document.getElementById('extractedText').textContent = text;
-            speech.text = text; // Set text for speech
-            enableButtons();
-        }
-
-        // Read aloud
-        document.getElementById('readBtn').addEventListener('click', function () {
-            window.speechSynthesis.speak(speech);
-            disableButtonsExcept('pause', 'stop');
-        });
-
-        // Pause speech
-        document.getElementById('pauseBtn').addEventListener('click', function () {
-            window.speechSynthesis.pause();
-            isPaused = true;
-            disableButtonsExcept('resume', 'stop');
-        });
-
-        // Resume speech
-        document.getElementById('resumeBtn').addEventListener('click', function () {
-            window.speechSynthesis.resume();
-            isPaused = false;
-            disableButtonsExcept('pause', 'stop');
-        });
-
-        // Stop speech
-        document.getElementById('stopBtn').addEventListener('click', function () {
-            window.speechSynthesis.cancel();
-            disableButtonsExcept('read');
-        });
-
-        // Enable/disable buttons
-        function enableButtons() {
-            document.getElementById('readBtn').disabled = false;
-        }
-
-        function disableButtonsExcept(...buttons) {
-            const buttonIds = ['read', 'pause', 'resume', 'stop'];
-            buttonIds.forEach(id => {
-                document.getElementById(`${id}Btn`).disabled = !buttons.includes(id);
-            });
-        }
+        // Paste the JavaScript code here
     </script>
 </body>
 </html>
